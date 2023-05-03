@@ -39,11 +39,11 @@
   },
   "homepage": "https://github.com/jBernavaPrah/jovo-vonage-platform#readme",
   "dependencies": {
-    "@jovotech/model": "^4.0.0",
     "@jovotech/cli-core": "^4.1.9",
+    "@jovotech/model": "^4.0.0",
     "class-transformer": "^0.5.1",
-    "reflect-metadata": "^0.1.13",
-    "lodash.clonedeep": "^4.5.0"
+    "lodash.clonedeep": "^4.5.0",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@jovotech/common": "^4.5.6",
@@ -64,7 +64,7 @@
     "global-modules": "^2.0.0",
     "jest": "^29.2.1",
     "nock": "^13.0.11",
-    "prettier": "^2.4.1",
+    "prettier": "^2.8.8",
     "rimraf": "^3.0.2",
     "symlink-dir": "^4.1.0",
     "ts-jest": "^29.0.4",
