@@ -76,7 +76,7 @@
     "@jovotech/framework": "4.5.6",
     "@jovotech/output": "4.5.6"
   },
-  "prettier": ".prettierrc.js",
+  "prettier": "./.prettierrc.js",
   "publishConfig": {
     "access": "public"
   }

@@ -14,7 +14,6 @@ export class InputActionOutput extends BaseOutput<InputActionOutputOptions> {
     return {
       message: this.options.message,
       platforms: {
-
         vonage: {
           nativeResponse: {
             action: createInput({

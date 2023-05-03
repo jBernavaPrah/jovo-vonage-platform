@@ -9,12 +9,7 @@ export class VonageRequestBuilder extends RequestBuilder<VonagePlatform> {
     console.log('Lunch builder');
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const launchJson = require(joinPaths(
-      __dirname,
-      '..',
-      'sample-requests',
-      'LaunchRequest.json',
-    ));
+    const launchJson = require(joinPaths(__dirname, '..', 'sample-requests', 'LaunchRequest.json'));
     const request: VonageRequest = Object.create(VonageRequest.prototype);
     return Object.assign(request, json || launchJson);
   }
@@ -25,12 +20,7 @@ export class VonageRequestBuilder extends RequestBuilder<VonagePlatform> {
     console.log('Intent builder');
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const intentJson = require(joinPaths(
-      __dirname,
-      '..',
-      'sample-requests',
-      'IntentRequest.json',
-    ));
+    const intentJson = require(joinPaths(__dirname, '..', 'sample-requests', 'IntentRequest.json'));
 
     const request: VonageRequest = Object.create(VonageRequest.prototype);
 
