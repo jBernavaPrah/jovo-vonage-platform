@@ -1,0 +1,38 @@
+import { Equals, IsBoolean, IsNumber, IsString, Max, Min } from '@jovotech/output';
+import { ActionAction, ActionBase } from './ActionBase';
+
+export class StreamAction extends ActionBase<ActionAction.Stream | 'stream'> {
+  @Equals(ActionAction.Stream)
+  action!: ActionAction.Stream | 'stream';
+
+  /**
+   *  An array containing a single URL to an mp3 or wav (16-bit) audio file to stream to the Call or Conversation.
+   */
+  @IsString()
+  streamUrl!: string;
+
+  /**
+   * Set the audio level of the stream in the range -1 >=level<=1 with a precision of 0.1. The default value is 0.
+   */
+  @IsNumber()
+  @Min(-1)
+  @Max(1)
+  level?: number = 0;
+
+  /**
+   * Set to true so this action is terminated when the user interacts with the application either with DTMF or ASR voice input. Use this feature to enable users to choose an option without having to listen to the whole message in your Interactive Voice Response (IVR ). If you set bargeIn to true on one more Stream actions then the next non-stream action in the NCCO stack must be an input action. The default value is false. Once bargeIn is set to true it will stay true (even if bargeIn: false is set in a following action) until an input action is encountered.
+   */
+  @IsBoolean()
+  bargeIn?: boolean = false;
+
+  /**
+   * The number of times audio is repeated before the Call is closed. The default value is 1. Set to 0 to loop infinitely.
+   */
+  @IsNumber()
+  @Min(0)
+  loop?: number = 1;
+
+  hasSessionEnded(): boolean {
+    return false;
+  }
+}
