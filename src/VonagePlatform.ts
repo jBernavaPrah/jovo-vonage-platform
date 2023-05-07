@@ -114,6 +114,11 @@ export class VonagePlatform extends Platform<
     this.augmentAppHandle();
   }
 
+  constructor(config: VonageInitConfig) {
+    super(config);
+    //Object.setPrototypeOf(this, Platform.prototype);
+  }
+
   augmentAppHandle(): void {
     const APP_HANDLE = App.prototype.handle;
     const getVerifyTokenFromConfig = function (this: VonagePlatform) {
@@ -121,7 +126,7 @@ export class VonagePlatform extends Platform<
     }.bind(this);
 
     App.prototype.handle = async function (server: Server) {
-      console.log('ABCd');
+      //console.log('ABCd');
 
       const request = server.getRequestObject();
       const query = server.getQueryParams();
@@ -171,7 +176,7 @@ export class VonagePlatform extends Platform<
 
   mount(parent: HandleRequest): Promise<void> | void {
     super.mount(parent);
-    console.log('ABCmount');
+    //console.log('ABCmount');
 
     //this.middlewareCollection.use('before')
 

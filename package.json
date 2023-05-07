@@ -39,17 +39,19 @@
   },
   "homepage": "https://github.com/jBernavaPrah/jovo-vonage-platform#readme",
   "dependencies": {
-    "@jovotech/cli-core": "^4.1.9",
-    "@jovotech/model": "^4.0.0",
+
+
     "class-transformer": "^0.5.1",
     "lodash.clonedeep": "^4.5.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@jovotech/common": "^4.5.6",
+    "@jovotech/cli-core": "^4.1.9",
+    "@jovotech/model": "^4.0.0",
+    "@jovotech/common": "^4.5.7",
     "@jovotech/filebuilder": "^0.0.1",
-    "@jovotech/framework": "^4.5.6",
-    "@jovotech/output": "^4.5.6",
+    "@jovotech/framework": "^4.5.7",
+    "@jovotech/output": "^4.5.7",
     "@types/jest": "^26.0.20",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/node": "^12.20.37",
@@ -73,8 +75,8 @@
   "peerDependencies": {
     "@jovotech/common": "^4.2.16",
     "@jovotech/filebuilder": "^0.0.1",
-    "@jovotech/framework": "4.5.6",
-    "@jovotech/output": "4.5.6"
+    "@jovotech/framework": "4.5.7",
+    "@jovotech/output": "4.5.7"
   },
   "prettier": "./.prettierrc.js",
   "publishConfig": {
