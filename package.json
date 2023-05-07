@@ -1,6 +1,6 @@
 {
   "name": "@jbernavaprah/jovo-vonage-platform",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Vonage Integration for Jovo",
   "main": "dist/cjs/index.js",
   "module": "dist/esm5/index.js",
@@ -39,8 +39,6 @@
   },
   "homepage": "https://github.com/jBernavaPrah/jovo-vonage-platform#readme",
   "dependencies": {
-
-
     "class-transformer": "^0.5.1",
     "lodash.clonedeep": "^4.5.0",
     "reflect-metadata": "^0.1.13"

@@ -14,5 +14,3 @@ export class Vonage extends Jovo<
   VonageDevice,
   VonagePlatform
 > {}
-
-
