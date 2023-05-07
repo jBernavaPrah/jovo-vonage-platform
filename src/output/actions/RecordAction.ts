@@ -1,8 +1,8 @@
 import { Equals, IsBoolean, IsEnum, IsString, IsUrl, Max, Min } from '@jovotech/output';
 import { ActionAction, ActionBase } from './ActionBase';
-import { VonageEventMethodEnum } from '../common/VonageEventMethodEnum';
+import { EventMethodEnum } from '../common/EventMethodEnum';
 
-enum RecordFormat {
+export enum RecordFormat {
   mp3 = 'mp3',
   wav = 'wav',
   ogg = 'ogg',
@@ -66,10 +66,6 @@ export class RecordAction extends ActionBase<ActionAction.Record | 'record'> {
   @IsUrl()
   eventUrl?: string;
 
-  @IsEnum(VonageEventMethodEnum)
-  eventMethod?: VonageEventMethodEnum = VonageEventMethodEnum.POST;
-
-  hasSessionEnded(): boolean {
-    return false;
-  }
+  @IsEnum(EventMethodEnum)
+  eventMethod?: EventMethodEnum = EventMethodEnum.POST;
 }

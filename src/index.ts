@@ -19,10 +19,10 @@ declare module '@jovotech/framework/dist/types/Jovo' {
 }
 registerPlatformSpecificJovoReference('$vonage', Vonage);
 
-export * from './output';
 export * from './Vonage';
-export * from './VonageDevice';
 export * from './VonagePlatform';
+export * from './VonageDevice';
 export * from './VonageResponse';
 export * from './VonageRequest';
 export * from './VonageUser';
+export * from './output';

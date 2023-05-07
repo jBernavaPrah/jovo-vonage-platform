@@ -10,7 +10,7 @@ import {
   Min,
 } from '@jovotech/output';
 import { ActionAction, ActionBase } from './ActionBase';
-import { VonageLanguageEnum } from '../common/VonageLanguageEnum';
+import { LanguageEnum } from '../common/LanguageEnum';
 
 export class TalkAction extends ActionBase<ActionAction.Talk | 'talk'> {
   @Equals(ActionAction.Talk)
@@ -52,7 +52,7 @@ export class TalkAction extends ActionBase<ActionAction.Talk | 'talk'> {
    * The language (BCP-47 format) for the message you are sending. Default: en-US. Possible values are listed in the Text-To-Speech guide.
    */
   @IsOptional()
-  @IsEnum(VonageLanguageEnum)
+  @IsEnum(LanguageEnum)
   language?: string = 'en-US';
 
   /**

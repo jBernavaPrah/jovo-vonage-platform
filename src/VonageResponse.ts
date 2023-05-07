@@ -1,7 +1,7 @@
 import { JovoResponse } from '@jovotech/framework';
-import { IsObject, ValidateNested } from '@jovotech/output';
+import { IsArray, IsObject, ValidateNested } from '@jovotech/output';
 
-import { Action } from './output/actions/ActionBase';
+import { Action } from './output';
 import { TransformAction } from './output/decorators/transformation/TransformAction';
 
 export class VonageResponse extends JovoResponse {

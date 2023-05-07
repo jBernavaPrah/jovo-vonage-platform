@@ -1,13 +1,33 @@
 import { MessageValue } from '@jovotech/framework';
-import { TalkAction } from './actions';
-import { InputAction, InputType } from './actions';
-import { ActionAction } from './actions';
+import { ActionAction, InputAction, InputType, TalkAction } from './actions';
 
 export function convertMessageToVonageTalk(message: MessageValue): TalkAction {
+  return createTalkAction(
+    typeof message === 'string' ? message : message.text || (message.speech as string),
+  );
+}
+
+export function createTalkAction(
+  text: string,
+  config: Omit<TalkAction, 'action' | 'text'> = {},
+): TalkAction {
   return {
     action: ActionAction.Talk,
-    text: typeof message === 'string' ? message : message.text || (message.speech as string),
+    text,
+    ...config,
   };
+}
+
+export function createSpeechInputAction(
+  config: Omit<InputAction, 'action' | 'type' | 'dtmf'> = {},
+): InputAction {
+  return createInputAction([InputType.speech], config);
+}
+
+export function createDTMFInputAction(
+  config: Omit<InputAction, 'action' | 'type' | 'speech'> = {},
+): InputAction {
+  return createInputAction([InputType.dtmf], config);
 }
 
 export function createInputAction(

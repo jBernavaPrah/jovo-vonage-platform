@@ -24,7 +24,7 @@ export class ActionBase<TYPE extends ActionActionLike = ActionActionLike> {
   [key: string]: unknown;
 
   @IsEnum(ActionAction)
-  action!: TYPE;
+  action?: TYPE;
 }
 
 export type Action =

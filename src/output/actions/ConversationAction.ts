@@ -52,8 +52,4 @@ export class ConversationAction extends ActionBase<ActionAction.Conversation | '
 
   @IsBoolean()
   mute?: boolean = false;
-
-  hasSessionEnded(): boolean {
-    return false;
-  }
 }

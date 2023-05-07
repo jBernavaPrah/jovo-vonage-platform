@@ -14,8 +14,8 @@ import {
   Equals,
 } from '@jovotech/output';
 import { ActionAction, ActionBase } from './ActionBase';
-import { VonageEventMethodEnum } from '../common/VonageEventMethodEnum';
-import { VonageLanguageEnum } from '../common/VonageLanguageEnum';
+import { EventMethodEnum } from '../common/EventMethodEnum';
+import { LanguageEnum } from '../common/LanguageEnum';
 
 export enum InputType {
   dtmf = 'dtmf',
@@ -42,8 +42,8 @@ class Speech {
   /**
    * Expected language of the user's speech. Format: BCP-47. Default: en-US.
    */
-  @IsEnum(VonageLanguageEnum)
-  language?: VonageLanguageEnum = VonageLanguageEnum['en-US'];
+  @IsEnum(LanguageEnum)
+  language?: LanguageEnum = LanguageEnum['en-US'];
 
   /**
    * Array of hints (strings) to improve recognition quality if certain words are expected from the user.
@@ -136,6 +136,6 @@ export class InputAction extends ActionBase<ActionAction.Input | 'input'> {
   /**
    * he HTTP method used to send event information to event_url The default value is POST.
    */
-  @IsEnum(VonageEventMethodEnum)
-  eventMethod?: VonageEventMethodEnum = VonageEventMethodEnum.POST;
+  @IsEnum(EventMethodEnum)
+  eventMethod?: EventMethodEnum = EventMethodEnum.POST;
 }

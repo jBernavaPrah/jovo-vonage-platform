@@ -1,4 +1,4 @@
-export enum VonageLanguageEnum {
+export enum LanguageEnum {
   'af-ZA' = 'af-ZA',
   'sq-AL' = 'sq-AL',
   'am-ET' = 'am-ET',

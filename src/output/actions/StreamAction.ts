@@ -1,5 +1,16 @@
-import { Equals, IsBoolean, IsNumber, IsString, Max, Min } from '@jovotech/output';
+import {
+  Equals,
+  IsBoolean,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Max,
+  Min,
+} from '@jovotech/output';
 import { ActionAction, ActionBase } from './ActionBase';
+import { EventMethodEnum } from '../common/EventMethodEnum';
 
 export class StreamAction extends ActionBase<ActionAction.Stream | 'stream'> {
   @Equals(ActionAction.Stream)
@@ -32,7 +43,17 @@ export class StreamAction extends ActionBase<ActionAction.Stream | 'stream'> {
   @Min(0)
   loop?: number = 1;
 
-  hasSessionEnded(): boolean {
-    return false;
-  }
+  /**
+   * Set the webhook endpoint that Vonage calls asynchronously on each of the possible Call States. If eventType is set to synchronous the eventUrl can return an NCCO that overrides the current NCCO when a timeout occurs.
+   */
+  @IsOptional()
+  @IsUrl()
+  eventUrl?: string;
+
+  /**
+   * The HTTP method Vonage uses to make the request to eventUrl. The default value is POST.
+   */
+  @IsOptional()
+  @IsEnum(EventMethodEnum)
+  eventMethod?: EventMethodEnum;
 }
