@@ -2,7 +2,7 @@ import { CapabilityType, InputType, JovoInput, JovoRequest } from '@jovotech/fra
 import { InputTypeLike, UnknownObject } from '@jovotech/cli-core';
 
 export class VonageRequest extends JovoRequest {
-  $type = 'vonage';
+  $type? = 'vonage';
   to!: string;
   from!: string;
   uuid!: string;

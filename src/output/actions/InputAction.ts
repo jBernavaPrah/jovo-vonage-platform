@@ -43,7 +43,7 @@ class Speech {
    * Expected language of the user's speech. Format: BCP-47. Default: en-US.
    */
   @IsEnum(LanguageEnum)
-  language?: LanguageEnum = LanguageEnum['en-US'];
+  language?: LanguageEnum | string = LanguageEnum['en-US'];
 
   /**
    * Array of hints (strings) to improve recognition quality if certain words are expected from the user.

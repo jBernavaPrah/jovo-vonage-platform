@@ -4,6 +4,7 @@ import {
   Extensible,
   ExtensibleInitConfig,
   HandleRequest,
+  Jovo,
   JovoError,
   Platform,
   PlatformConfig,
@@ -176,12 +177,11 @@ export class VonagePlatform extends Platform<
 
   mount(parent: HandleRequest): Promise<void> | void {
     super.mount(parent);
-    //console.log('ABCmount');
 
-    //this.middlewareCollection.use('before')
+    this.middlewareCollection.use('before.request.end', (jovo) => this.fixRequest(jovo));
 
     // todo: add here new input before the request stops!
-    //this.middlewareCollection.use('after.request.end', (jovo) => this.fixResponse(jovo));
+    //this.middlewareCollection.use('after.response.end', (jovo) => this.fixResponse(jovo));
   }
 
   getDefaultConfig(): VonageConfig {
@@ -274,5 +274,9 @@ export class VonagePlatform extends Platform<
     }
 
     return action;
+  }
+
+  private fixRequest(jovo: Jovo) {
+    jovo.$request.setLocale('it');
   }
 }
