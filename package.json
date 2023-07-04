@@ -19,9 +19,9 @@
     "eslint": "eslint src test --fix --ext .ts",
     "rimraf": "rimraf dist",
     "test": "jest --runInBand",
-    "release:major": "npm version $(semver $npm_package_version -i major) --force && npm publish --tag latest --force",
-    "release:minor": "npm version $(semver $npm_package_version -i minor) --force && npm publish --tag latest --force",
-    "release:patch": "npm version $(semver $npm_package_version -i patch) --force && npm publish --tag latest --force"
+    "release:major": "npm version $(semver $npm_package_version -i major) && npm publish --tag latest ",
+    "release:minor": "npm version $(semver $npm_package_version -i minor) && npm publish --tag latest ",
+    "release:patch": "npm version $(semver $npm_package_version -i patch) && npm publish --tag latest "
   },
   "author": "Jure Bernava Prah",
   "license": "Apache-2.0",
