@@ -3,11 +3,16 @@ import { InputTypeLike, UnknownObject } from '@jovotech/cli-core';
 
 export class VonageRequest extends JovoRequest {
   $type? = 'vonage';
+
+  $eventUrl = '';
+
+  locale?: string;
   to!: string;
   from!: string;
   uuid!: string;
   timestamp!: string;
   conversation_uuid!: string;
+  direction?: 'inbound' | 'outbound';
   dtmf?: {
     digits: string;
     time_out: boolean;
@@ -16,7 +21,7 @@ export class VonageRequest extends JovoRequest {
     timeout_reason?: 'end_on_silence_timeout' | 'max_duration' | 'start_timeout';
     error?: string;
     recording_url?: string;
-    results: {
+    results?: {
       confidence: number;
       text: string;
     }[];
@@ -35,23 +40,27 @@ export class VonageRequest extends JovoRequest {
   }
 
   getInputText(): JovoInput['text'] {
-    return this.speech?.results[0].text ?? this.dtmf?.digits;
+    return this.speech?.results?.filter((r) => r.confidence > 0.5)[0]?.text ?? this.dtmf?.digits;
   }
 
   getInputType(): InputTypeLike | 'DTMF' | undefined {
     if (!this.speech && !this.dtmf) return InputType.Launch;
-    if (this.dtmf) return 'DTMF';
+    if (this.dtmf?.digits) return 'DTMF';
     return InputType.Text;
   }
 
   getIntent(): JovoInput['intent'] {
-    return;
+    if (this.speech?.error) return 'error';
+
+    return this.speech?.timeout_reason && this.speech?.timeout_reason !== 'end_on_silence_timeout'
+      ? 'silence'
+      : undefined;
   }
 
   getLocale(): string | undefined {
     // search for the locale from call?
 
-    return;
+    return this.locale;
   }
 
   getSessionData(): UnknownObject | undefined {
@@ -67,7 +76,7 @@ export class VonageRequest extends JovoRequest {
   }
 
   isNewSession(): boolean | undefined {
-    return undefined;
+    return false;
   }
 
   setIntent(intent: string): void {
@@ -78,7 +87,7 @@ export class VonageRequest extends JovoRequest {
     this.locale = locale;
   }
 
-  setSessionData(): void {
+  setSessionData(data: Record<string, unknown>): void {
     return;
   }
 

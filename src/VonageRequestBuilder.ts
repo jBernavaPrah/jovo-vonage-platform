@@ -7,7 +7,7 @@ import { VonageRequest } from './VonageRequest';
 export class VonageRequestBuilder extends RequestBuilder<VonagePlatform> {
   launch(json?: UnknownObject): VonageRequest {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const launchJson = require(joinPaths(__dirname, '..', 'sample-requests', 'LaunchRequest.json'));
+    const launchJson = require(joinPaths(__dirname, 'sample-requests', 'LaunchRequest.json'));
     const request: VonageRequest = Object.create(VonageRequest.prototype);
     return Object.assign(request, json || launchJson);
   }
@@ -16,7 +16,7 @@ export class VonageRequestBuilder extends RequestBuilder<VonagePlatform> {
   intent(json?: UnknownObject): VonageRequest;
   intent(nameOrJson?: string | UnknownObject): VonageRequest {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const intentJson = require(joinPaths(__dirname, '..', 'sample-requests', 'IntentRequest.json'));
+    const intentJson = require(joinPaths(__dirname, 'sample-requests', 'IntentRequest.json'));
 
     const request: VonageRequest = Object.create(VonageRequest.prototype);
 

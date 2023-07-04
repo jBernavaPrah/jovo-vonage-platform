@@ -24,11 +24,10 @@ export class ActionBase<TYPE extends ActionActionLike = ActionActionLike> {
   [key: string]: unknown;
 
   @IsEnum(ActionAction)
-  action?: TYPE;
+  declare action: TYPE;
 }
 
 export type Action =
-  | ActionBase
   | ConversationAction
   | ConnectAction
   | InputAction

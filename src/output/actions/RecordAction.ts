@@ -1,4 +1,14 @@
-import { Equals, IsBoolean, IsEnum, IsString, IsUrl, Max, Min } from '@jovotech/output';
+import {
+  Equals,
+  IsArray,
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Max,
+  Min,
+} from '@jovotech/output';
 import { ActionAction, ActionBase } from './ActionBase';
 import { EventMethodEnum } from '../common/EventMethodEnum';
 
@@ -10,7 +20,7 @@ export enum RecordFormat {
 
 export class RecordAction extends ActionBase<ActionAction.Record | 'record'> {
   @Equals(ActionAction.Record)
-  action!: ActionAction.Record | 'record';
+  declare action: ActionAction.Record | 'record';
 
   /**
    * Record the Call in a specific format. Options are:
@@ -58,14 +68,16 @@ export class RecordAction extends ActionBase<ActionAction.Record | 'record'> {
    * Set to true to play a beep when a recording starts.
    */
   @IsBoolean()
-  beepStart?: boolean = false;
+  beepStart?: boolean;
 
   /**
    * The URL to the webhook endpoint that is called asynchronously when a recording is finished. If the message recording is hosted by Vonage, this webhook contains the URL you need to download the recording and other meta data.
    */
+  @IsOptional()
+  @IsArray()
   @IsUrl()
-  eventUrl?: string;
+  eventUrl?: (string | undefined)[];
 
   @IsEnum(EventMethodEnum)
-  eventMethod?: EventMethodEnum = EventMethodEnum.POST;
+  eventMethod?: EventMethodEnum | string;
 }

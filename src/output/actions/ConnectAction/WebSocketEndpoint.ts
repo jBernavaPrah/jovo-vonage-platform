@@ -8,7 +8,7 @@ enum ContentType {
 
 export class WebSocketEndpoint extends EndpointBase<EndpointType.WebSocket | 'websocket'> {
   @Equals(EndpointType.WebSocket)
-  type!: EndpointType.WebSocket | 'websocket';
+  declare type: EndpointType.WebSocket | 'websocket';
 
   /**
    * The URI to the websocket you are streaming to.

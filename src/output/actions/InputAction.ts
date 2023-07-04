@@ -12,6 +12,7 @@ import {
   IsOptional,
   ValidateNested,
   Equals,
+  IsArray,
 } from '@jovotech/output';
 import { ActionAction, ActionBase } from './ActionBase';
 import { EventMethodEnum } from '../common/EventMethodEnum';
@@ -81,14 +82,14 @@ class DTMF {
   @IsOptional()
   @Min(0)
   @Max(10)
-  timeOut?: number = 3;
+  timeOut?: number;
 
   /**
    * The number of digits the user can press. The maximum value is 20, the default is 4 digits.
    */
   @IsOptional()
   @Max(20)
-  maxDigits?: number = 4;
+  maxDigits?: number;
 
   /**
    * Set to true so the callee's activity is sent to your webhook endpoint at eventUrl after they press #. If # is not pressed the result is submitted after timeOut seconds. The default value is false. That is, the result is sent to your webhook endpoint after timeOut seconds.
@@ -100,7 +101,7 @@ class DTMF {
 
 export class InputAction extends ActionBase<ActionAction.Input | 'input'> {
   @Equals(ActionAction.Input)
-  action!: ActionAction.Input | 'input';
+  declare action: ActionAction.Input | 'input';
 
   /**
    * Acceptable input type, can be set as [ "dtmf" ] for DTMF input only, [ "speech" ] for ASR only, or [ "dtmf", "speech" ] for both.
@@ -130,12 +131,14 @@ export class InputAction extends ActionBase<ActionAction.Input | 'input'> {
    * Vonage sends the digits pressed by the callee to this URL 1) after timeOut pause in activity or when # is pressed for DTMF or 2) after user stops speaking or 30 seconds of speech for speech input.
    */
   @IsOptional()
+  @IsArray()
   @IsUrl()
-  eventUrl?: string;
+  eventUrl?: (string | undefined)[];
 
   /**
    * he HTTP method used to send event information to event_url The default value is POST.
    */
+  @IsOptional()
   @IsEnum(EventMethodEnum)
-  eventMethod?: EventMethodEnum = EventMethodEnum.POST;
+  eventMethod?: EventMethodEnum | string;
 }

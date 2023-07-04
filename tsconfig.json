@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "./dist/cjs",
     "target": "es2017",
     "module": "commonjs",
     "lib": ["es2017"],
@@ -13,8 +14,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
-    "useUnknownInCatchVariables": false,
-    "outDir": "./dist/cjs"
+    "useUnknownInCatchVariables": false
   },
   "exclude": ["node_modules", "dist"],
   "include": ["src"]

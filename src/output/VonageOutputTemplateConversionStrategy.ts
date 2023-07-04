@@ -1,73 +1,67 @@
 import { VonageResponse } from '../VonageResponse';
 import {
-  mergeInstances,
-  MessageMaxLength,
   OutputTemplateConverterStrategyConfig,
-  SingleResponseOutputTemplateConverterStrategy,
+  MultipleResponsesOutputTemplateConverterStrategy,
+  mergeInstances,
 } from '@jovotech/output';
-import { MessageValue, NormalizedOutputTemplate } from '@jovotech/framework';
-import { MESSAGE_TEXT_MAX_LENGTH } from './constant';
-import { Action, TalkAction } from './actions';
+import { NormalizedOutputTemplate } from '@jovotech/framework';
 import { convertMessageToVonageTalk } from './utilities';
 
-import { ActionAction } from './actions';
-
-export class VonageOutputTemplateConversionStrategy extends SingleResponseOutputTemplateConverterStrategy<
+export class VonageOutputTemplateConversionStrategy extends MultipleResponsesOutputTemplateConverterStrategy<
   VonageResponse,
   OutputTemplateConverterStrategyConfig
 > {
-  readonly platformName = 'vonage' as const;
+  readonly platformName: string = 'vonage';
 
-  constructor() {
-    super();
-  }
+  responseClass = VonageResponse;
 
-  // fake response because the normalizeResponse is overwritten
-  readonly responseClass = VonageResponse;
-
-  toResponse(output: NormalizedOutputTemplate): VonageResponse {
-    // idea: use the quickResponse as dtmf input??
-
+  convertOutput(output: NormalizedOutputTemplate): VonageResponse {
     const response: VonageResponse = this.normalizeResponse({
-      action: {},
-    });
+      $type: 'vonage',
+    }) as VonageResponse;
 
     const message = output.message;
     if (message) response.action = convertMessageToVonageTalk(message);
 
     if (output.platforms?.vonage?.nativeResponse) {
-      mergeInstances(response, output.platforms.vonage.nativeResponse);
+      mergeInstances(response, {
+        action: output.platforms.vonage.nativeResponse,
+      });
     }
 
     // todo: implement the other output type (like quick response)
 
     return response;
+
+    // const quickReplies = output.quickReplies;
+    // const nativeQuickReplies = platformOutput?.nativeQuickReplies;
+    // if (quickReplies?.length || nativeQuickReplies?.length) {
+    //   const lastResponseWithMessage = responses
+    //     .slice()
+    //     .reverse()
+    //     .find((response) => !!response.message);
+    //   if (lastResponseWithMessage?.message) {
+    //     lastResponseWithMessage.message.quick_replies = [];
+    //     if (nativeQuickReplies?.length) {
+    //       lastResponseWithMessage.message.quick_replies.push(...nativeQuickReplies);
+    //     }
+    //     if (quickReplies?.length) {
+    //       lastResponseWithMessage.message.quick_replies.push(
+    //         ...quickReplies.map(this.convertQuickReplyToFacebookMessengerQuickReply),
+    //       );
+    //     }
+    //   }
+    // }
   }
 
-  fromResponse(response: VonageResponse): NormalizedOutputTemplate {
-    // todo: eventually improve this code.
-    const output: NormalizedOutputTemplate = {};
+  convertResponse(response: VonageResponse): NormalizedOutputTemplate {
+    return {};
+  }
 
-    if (response.action?.action === ActionAction.Talk) {
-      output.message = (response as unknown as TalkAction).text;
-    }
+  protected sanitizeOutput(
+    output: NormalizedOutputTemplate,
+    index: number | undefined,
+  ): NormalizedOutputTemplate {
     return output;
-  }
-
-  protected sanitizeOutput(output: NormalizedOutputTemplate): NormalizedOutputTemplate {
-    if (output.message) {
-      output.message = this.sanitizeMessage(output.message, `message`);
-    }
-
-    return output;
-  }
-
-  protected sanitizeMessage(
-    message: MessageValue,
-    path: string,
-    maxLength: MessageMaxLength = MESSAGE_TEXT_MAX_LENGTH,
-    offset?: number,
-  ): MessageValue {
-    return super.sanitizeMessage(message, path, maxLength, offset);
   }
 }

@@ -3,7 +3,7 @@ import { Equals, IsObject, IsOptional, IsUrl } from '@jovotech/output';
 
 export class SipEndpoint extends EndpointBase<EndpointType.Sip | 'sip'> {
   @Equals(EndpointType.Sip)
-  type!: EndpointType.Sip | 'sip';
+  declare type: EndpointType.Sip | 'sip';
 
   /**
    * The SIP URI to the endpoint you are connecting to in the format sip:rebekka@sip.example.com. To use TLS and/or SRTP, include respectively transport=tls or media=srtp to the URL with the semicolon ; as a delimiter, for example: sip:rebekka@sip.example.com;transport=tls;media=srtp.

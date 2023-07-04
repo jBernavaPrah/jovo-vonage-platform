@@ -21,7 +21,7 @@ class PhoneEndpointOnAnswer {
  */
 export class PhoneEndpoint extends EndpointBase<EndpointType.Phone | 'phone'> {
   @Equals(EndpointType.Phone)
-  type!: EndpointType.Phone | 'phone';
+  declare type: EndpointType.Phone | 'phone';
 
   /**
    * The phone number to connect to in E.164 format.

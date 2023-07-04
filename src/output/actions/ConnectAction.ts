@@ -29,7 +29,7 @@ enum MachineDetectionType {
  */
 export class ConnectAction extends ActionBase<ActionAction.Connect | 'connect'> {
   @Equals(ActionAction.Connect)
-  action!: ActionAction.Connect | 'connect';
+  declare action: ActionAction.Connect | 'connect';
 
   /**
    * Array of endpoint objects to connect to. Currently supports a maximum of one endpoint object.
@@ -55,7 +55,7 @@ export class ConnectAction extends ActionBase<ActionAction.Connect | 'connect'> 
    */
   @IsOptional()
   @IsBoolean()
-  randomFromNumber?: boolean = false;
+  randomFromNumber?: boolean;
 
   /**
    * Set to synchronous to:
@@ -71,14 +71,14 @@ export class ConnectAction extends ActionBase<ActionAction.Connect | 'connect'> 
    */
   @IsOptional()
   @IsNumber()
-  timeout?: number = 60;
+  timeout?: number;
 
   /**
    * Maximum length of the call in seconds. The default and maximum value is 7200 seconds (2 hours).
    */
   @IsOptional()
   @IsNumber()
-  limit?: number = 7200;
+  limit?: number;
 
   /**
    * Configure the behavior when Vonage detects that a destination is an answerphone. Set to either:
@@ -94,7 +94,7 @@ export class ConnectAction extends ActionBase<ActionAction.Connect | 'connect'> 
    */
   @IsOptional()
   @IsUrl()
-  eventUrl?: string;
+  eventUrl?: (string | undefined)[];
 
   /**
    * The HTTP method Vonage uses to make the request to eventUrl. The default value is POST.

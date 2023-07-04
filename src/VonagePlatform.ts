@@ -4,11 +4,13 @@ import {
   Extensible,
   ExtensibleInitConfig,
   HandleRequest,
+  Headers,
   Jovo,
   JovoError,
   Platform,
   PlatformConfig,
   Server,
+  ServerResponse,
   StoredElementSession,
 } from '@jovotech/framework';
 import { Vonage } from './Vonage';
@@ -23,6 +25,7 @@ import {
   ConnectAction,
   ConversationAction,
   InputAction,
+  InputActionOutput,
   NotifyAction,
   RecordAction,
   StreamAction,
@@ -30,10 +33,32 @@ import {
   VonageOutputTemplateConversionStrategy,
 } from './output';
 import _cloneDeep from 'lodash.clonedeep';
-import { createSpeechInputAction } from './output/utilities';
+import { LanguageEnum } from './output/common/LanguageEnum';
+import * as jwt from 'jsonwebtoken';
+import * as sha from 'js-sha256';
+import { ExpressJs } from '@jovotech/server-express';
+import { resolve } from 'path';
+import { homedir } from 'os';
+import { promises } from 'fs';
+import { upperCase } from 'lodash';
 
 export interface VonageConfig extends PlatformConfig {
-  verifyToken: string;
+  /**
+   * Locale used if not found a mapped for the current request
+   */
+  fallbackLanguage: LanguageEnum | string;
+
+  /**
+   * Language map, used to correctly set the language response.
+   */
+  languageMap: Record<string, LanguageEnum | string | undefined>;
+
+  signedToken?: string;
+  /**
+   * Overwrite the endpoint used in the project.
+   */
+  eventUrl?: string;
+
   session?: StoredElementSession & { enabled?: never };
 
   /**
@@ -44,7 +69,7 @@ export interface VonageConfig extends PlatformConfig {
     dtmf?: Pick<NonNullable<InputAction['dtmf']>, 'timeOut' | 'submitInHash'>;
     speech?: Pick<
       NonNullable<InputAction['speech']>,
-      'language' | 'endInSilence' | 'maxDuration' | 'startTimeout' | 'saveAudio'
+      'endInSilence' | 'maxDuration' | 'startTimeout' | 'saveAudio'
     >;
   };
 
@@ -67,7 +92,7 @@ export interface VonageConfig extends PlatformConfig {
    * Configuration used for the Talk Action.
    * If the language is not set, will be used the call language
    */
-  talkConfig?: Pick<TalkAction, 'language' | 'premium' | 'style' | 'level'>;
+  talkConfig?: Pick<TalkAction, 'premium' | 'style' | 'level'>;
 
   connectConfig?: Pick<
     ConnectAction,
@@ -88,7 +113,7 @@ export interface VonageConfig extends PlatformConfig {
   streamConfig?: Pick<StreamAction, 'level'>;
 }
 
-export type VonageInitConfig = ExtensibleInitConfig<VonageConfig, 'verifyToken'>;
+export type VonageInitConfig = ExtensibleInitConfig<VonageConfig>;
 
 export class VonagePlatform extends Platform<
   VonageRequest,
@@ -117,166 +142,227 @@ export class VonagePlatform extends Platform<
 
   constructor(config: VonageInitConfig) {
     super(config);
-    //Object.setPrototypeOf(this, Platform.prototype);
   }
 
   augmentAppHandle(): void {
     const APP_HANDLE = App.prototype.handle;
-    const getVerifyTokenFromConfig = function (this: VonagePlatform) {
-      return this.config.verifyToken;
+
+    const validateAuthentication = function (
+      this: VonagePlatform,
+      request: AnyObject,
+      headers: Headers,
+    ) {
+      if (!this.config.signedToken) return true;
+
+      // if is not set, meaning that is not configuration by cli or in testing.
+      if (!this.config.eventUrl) return false;
+      const token = (headers.authorization as string | undefined)?.split(' ')[1];
+
+      if (!token) return false;
+      try {
+        const decoded = jwt.verify(token, this.config.signedToken, {
+          algorithms: ['HS256'],
+        });
+        return sha.sha256(JSON.stringify(request)) == decoded;
+      } catch (err) {
+        throw new JovoError({
+          message: 'Authentication token not valid',
+        });
+      }
     }.bind(this);
 
     App.prototype.handle = async function (server: Server) {
-      //console.log('ABCd');
-
       const request = server.getRequestObject();
-      const query = server.getQueryParams();
-
       const headers = server.getRequestHeaders();
 
-      // todo: implement the verification!
-      const verified = true;
-
-      // const verifyMode = query['hub.mode'];
-      // const verifyChallenge = query['hub.challenge'];
-      // const verifyToken = query['hub.verify_token'];
-
-      // todo: move after verific that this is a vonage request.
-      if (!verified) {
-        throw new JovoError({
-          message: 'The verify-token in the request does not match the configured verify-token.',
-          context: {
-            // verifyToken,
-            // configuredVerifyToken,
-          },
-        });
+      // in case the request come from the jovo-testing plugin, the platform is filled
+      if (request.platform || !validateAuthentication(request, headers)) {
+        return APP_HANDLE.call(this, server);
       }
 
-      // todo: improve the verification!
-      const isVonageRequest = query['platform'] === 'vonage';
+      server.setResponseHeaders({
+        'Content-Type': 'application/json',
+      });
 
-      if (isVonageRequest) {
-        const responses: VonageResponse[] = [];
-        // Set platform origin on request entry
-        const serverCopy = _cloneDeep(server);
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        serverCopy.setResponse = async (response: VonageResponse) => {
-          responses.push(response);
-        };
-
-        request.$type = 'vonage';
-        serverCopy.getRequestObject = () => request;
-        await APP_HANDLE.call(this, serverCopy);
-
-        return server.setResponse(responses);
+      if (request.status) {
+        return server.setResponse({});
       }
 
-      return APP_HANDLE.call(this, server);
+      let response: ServerResponse | unknown = {};
+      // Set platform origin on request entry
+      const serverCopy = _cloneDeep(server);
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      serverCopy.setResponse = async (r: VonageResponse) => {
+        response = r;
+      };
+
+      request.$type = 'vonage';
+
+      serverCopy.getRequestObject = () => request;
+      serverCopy.setResponseHeaders({
+        'Content-Type': 'application/json',
+      });
+
+      await APP_HANDLE.call(this, serverCopy);
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore // The response is always there.
+      return server.setResponse(response);
     };
   }
 
   mount(parent: HandleRequest): Promise<void> | void {
     super.mount(parent);
 
-    this.middlewareCollection.use('before.request.end', (jovo) => this.fixRequest(jovo));
+    this.middlewareCollection.use('before.request.start', async (jovo) => {
+      const request = jovo.$request as VonageRequest;
+      if (request.$type !== 'vonage') return;
+      request.$eventUrl = await this.extractEndpointFromServer(jovo);
+    });
 
-    // todo: add here new input before the request stops!
-    //this.middlewareCollection.use('after.response.end', (jovo) => this.fixResponse(jovo));
+    this.middlewareCollection.use('after.dialogue.end', async (jovo) => {
+      // with no output or none of the output has listen to false
+      // then instruct vonage to continue to listen
+      if (
+        (!jovo.$output.length || !jovo.$output.some((o) => o.listen === false)) &&
+        !jovo.$output.some((o) => o.platforms?.vonage?.nativeResponse?.action === 'input')
+      ) {
+        jovo.$output.push(new InputActionOutput(jovo, {}).build());
+      }
+    });
   }
 
   getDefaultConfig(): VonageConfig {
-    // todo: change the language of the input based on the incoming call
-
     return {
       ...this.getInitConfig(),
+      languageMap: {},
+      fallbackLanguage: LanguageEnum['en-GB'],
     };
   }
 
   getInitConfig(): VonageInitConfig {
-    return {
-      verifyToken: '<YOUR-SECURE-TOKEN>',
-    };
+    return {};
   }
 
   isRequestRelated(request: AnyObject | VonageRequest): boolean {
-    return request.$type === 'vonage' && request.from && request.to && request.conversation_uuid;
+    return request.$type === 'vonage';
   }
 
   isResponseRelated(response: AnyObject | VonageResponse): boolean {
-    console.log('is response related triggered');
-    return typeof response === typeof VonageResponse;
+    return response.$type === 'vonage';
   }
 
   finalizeResponse(
     response: VonageResponse[] | VonageResponse,
     jovo: Vonage,
   ): VonageResponse[] | Promise<VonageResponse> | Promise<VonageResponse[]> | VonageResponse {
-    const responses: Action[] = Array.isArray(response)
-      ? [...response.map((r) => this.setDefaultDataOnAction(r.action))]
-      : [this.setDefaultDataOnAction(response.action)];
+    // Extract only the action from response.
+    const responses: (Action | undefined)[] = Array.isArray(response)
+      ? [...response.map((r) => r.action)]
+      : [response.action];
 
-    if (
-      !responses?.some((a) => a.action === ActionAction.Input) &&
-      !jovo.$output.some((o) => o.listen === false)
-    ) {
-      responses.push(this.setDefaultDataOnAction(createSpeechInputAction()));
+    const eventUrl = this.config.eventUrl ?? (jovo.$request as VonageRequest).$eventUrl;
+    const language =
+      Object.keys(LanguageEnum).find(
+        (k) =>
+          `${jovo.$request.getLocale() ?? ''}-${upperCase(jovo.$request.getLocale() ?? '')}` === k,
+      ) ??
+      this.config.languageMap[jovo.$request.getLocale() ?? ''] ??
+      this.config.fallbackLanguage;
+
+    // Add default configuration to each action.
+    return responses
+      .filter((x): x is Action => x !== undefined)
+      .map((r) =>
+        this.setDefaultDataOnAction(r, language, eventUrl),
+      ) as unknown as VonageResponse[];
+  }
+
+  protected async retrieveLocalWebhookId(): Promise<string | undefined> {
+    const homeConfigPath = resolve(homedir(), '.jovo/config');
+    try {
+      const homeConfigBuffer = await promises.readFile(homeConfigPath);
+      const homeConfigData = JSON.parse(homeConfigBuffer.toString());
+      if (homeConfigData?.webhook?.uuid) {
+        return homeConfigData.webhook.uuid;
+      }
+    } catch (e) {}
+    return;
+  }
+
+  protected async extractEndpointFromServer(jovo: Jovo): Promise<string> {
+    if (jovo.$server instanceof ExpressJs) {
+      let protocol = 'https';
+      try {
+        protocol = jovo.$server.req?.protocol ?? 'https';
+      } catch (e) {}
+      return `${protocol}://${jovo.$server.req?.headers.host}${jovo.$server.req.originalUrl}`;
     }
 
-    //
-    return responses as unknown as VonageResponse[];
+    if (jovo.$plugins.JovoDebugger && jovo.$plugins.JovoDebugger.config.enabled) {
+      const webhookId = await this.retrieveLocalWebhookId();
+      return `${jovo.$plugins.JovoDebugger.config.webhookUrl}/${webhookId}`;
+    }
+    return '';
   }
 
   /**
    * Based by the configuration, set values if configuration is not found.
    *
    * @param action
+   * @param language
+   * @param eventUrl
    * @private
    */
-  private setDefaultDataOnAction(action: Action): Action {
+  private setDefaultDataOnAction(action: Action, language: string, eventUrl: string): Action {
+    Object.keys(action).forEach((key) => typeof action[key] === undefined && delete action[key]);
     switch (action.action) {
       case ActionAction.Input:
         return {
-          ...action,
+          eventUrl: [eventUrl],
           ...this.config.inputConfig,
+          speech: {
+            language,
+            ...this.config.inputConfig?.speech,
+          },
+          ...action,
         };
       case ActionAction.Talk:
         return {
-          ...action,
           ...this.config.talkConfig,
+          language,
+          ...action,
         };
       case ActionAction.Record:
         return {
-          ...action,
+          eventUrl: [eventUrl],
           ...this.config.recordConfig,
+          ...action,
         };
       case ActionAction.Conversation:
         return {
-          ...action,
           ...this.config.conversationConfig,
+          ...action,
         };
       case ActionAction.Connect:
         return {
-          ...action,
+          eventUrl: [eventUrl],
           ...this.config.connectConfig,
+          ...action,
         };
-
       case ActionAction.Stream:
         return {
-          ...action,
+          eventUrl: [eventUrl],
           ...this.config.streamConfig,
+          ...action,
         };
-
       case ActionAction.Notify:
         return {
-          ...action,
           ...this.config.notifyConfig,
+          ...action,
         };
     }
 
     return action;
-  }
-
-  private fixRequest(jovo: Jovo) {
-    jovo.$request.setLocale('it');
   }
 }

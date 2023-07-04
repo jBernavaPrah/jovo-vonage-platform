@@ -1,0 +1,68 @@
+{
+  "version": "4.0",
+  "intents": {
+    "empty": {
+      "phrases": ["Risposta vuota"]
+    },
+
+    "bot_challenge": {
+      "phrases": [
+        "Sei un bot",
+        "Sei una macchina",
+        "Sei un umano",
+        "Sei una persona",
+        "Parlo con una persona",
+        "parlo con una macchina",
+        "parlo con un bot"
+      ]
+    },
+    "affirm": {
+      "phrases": [
+        "sì",
+        "si",
+        "se se",
+        "corretto",
+        "ok",
+        "ottimo",
+        "certamente",
+        "va bene",
+        "Se se",
+        "daccordo",
+        "da accordo"
+      ]
+    },
+
+    "goodbye": {
+      "phrases": [
+        "arrivederci",
+        "saluti",
+        "è stato un piacere",
+        "ci sentiamo dopo",
+        "ci vediamo",
+        "ci vediamo dopo",
+        "ci sentiamo",
+        "a dopo",
+        "a presto",
+        "Buona notte",
+        "notte",
+        "buona giornata"
+      ]
+    },
+
+    "deny": {
+      "phrases": [
+        "no",
+        "n",
+        "mai",
+        "non penso proprio",
+        "sbagliato",
+        "non mi pare",
+        "non mi piace",
+        "veramente no",
+        "No",
+        "No grazie!",
+        "No grazie"
+      ]
+    }
+  }
+}

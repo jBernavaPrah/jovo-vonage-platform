@@ -1,4 +1,3 @@
-// Make NormalizedFacebookMessengerOutputTemplate available for the NormalizedOutputTemplatePlatforms-object via the facebookMessenger-key.
 import { NormalizedVonageOutputTemplate } from './models';
 import { registerOutputPlatform } from '@jovotech/output';
 

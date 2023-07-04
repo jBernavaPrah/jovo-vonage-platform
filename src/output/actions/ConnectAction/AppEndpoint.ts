@@ -6,7 +6,7 @@ import { Equals, IsString } from '@jovotech/output';
  */
 export class AppEndpoint extends EndpointBase<EndpointType.App | 'app'> {
   @Equals(EndpointType.App)
-  type!: EndpointType.App | 'app';
+  declare type: EndpointType.App | 'app';
 
   /**
    * The username of the user to connect to. This username must have been added as a user.

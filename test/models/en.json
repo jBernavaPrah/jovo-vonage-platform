@@ -1,0 +1,26 @@
+{
+  "invocation": "my test app",
+  "version": "4.0",
+  "intents": {
+    "bot_challenge": {
+      "phrases": [
+        "Sei un bot",
+        "Sei una macchina",
+        "Sei un umano",
+        "Sei una persona",
+        "Parlo con una persona",
+        "parlo con una macchina",
+        "parlo con un bot"
+      ]
+    },
+    "goodbye": {
+      "phrases": ["bye bye", "goodbye", "was a pleasure"]
+    },
+    "affirm": {
+      "phrases": ["yes", "yes please", "sure"]
+    },
+    "deny": {
+      "phrases": ["no", "no thanks"]
+    }
+  }
+}

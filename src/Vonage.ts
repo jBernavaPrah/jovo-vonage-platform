@@ -13,4 +13,8 @@ export class Vonage extends Jovo<
   VonageUser,
   VonageDevice,
   VonagePlatform
-> {}
+> {
+  get endpoint(): string {
+    return '';
+  }
+}
