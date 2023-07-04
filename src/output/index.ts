@@ -11,8 +11,9 @@ registerOutputPlatform('vonage', NormalizedVonageOutputTemplate);
 
 export * from './models';
 export * from './actions';
+export * from './common';
 
-export * from './templates/InputActionOutput';
+export * from './templates';
 
 export * from './VonageOutputTemplateConversionStrategy';
 export { convertMessageToVonageTalk, createInputAction } from './utilities';
