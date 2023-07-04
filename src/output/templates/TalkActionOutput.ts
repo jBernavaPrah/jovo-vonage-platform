@@ -1,9 +1,4 @@
-import {
-  BaseOutput,
-  Output,
-  OutputOptions,
-  OutputTemplate,
-} from '@jovotech/framework';
+import { BaseOutput, Output, OutputOptions, OutputTemplate } from '@jovotech/framework';
 import { TalkAction } from '../actions';
 
 export interface TextActionOutputOptions
