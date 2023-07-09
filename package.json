@@ -59,9 +59,9 @@
     "esbuild": "^0.13.8"
   },
   "peerDependencies": {
-    "@jovotech/framework": "4.5.9",
-    "@jovotech/output": "4.5.9",
-    "@jovotech/server-express": "4.5.9"
+    "@jovotech/framework": "4.5",
+    "@jovotech/output": "4.5",
+    "@jovotech/server-express": "4.5"
   },
   "prettier": "./.prettierrc.js",
   "publishConfig": {
