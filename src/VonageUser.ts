@@ -6,11 +6,11 @@ export class VonageUser extends JovoUser<Vonage> {
     return this.jovo.$request.from;
   }
 
-  get caller(): string {
+  get phone(): string {
     return this.jovo.$request.from;
   }
 
-  get callee(): string {
+  get called(): string {
     return this.jovo.$request.to;
   }
 }

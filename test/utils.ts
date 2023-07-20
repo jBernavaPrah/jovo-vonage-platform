@@ -15,16 +15,14 @@ export const createVonageHeaders = (headers: Record<string, unknown> = {}) => ({
   ...headers,
 });
 
-export const responseWithInput = (...args: Record<string, any>[]) => {
-  return [
-    ...args,
-    {
-      action: 'input',
-      eventUrl: ['http://test.com'],
-      speech: {
-        language: 'en-GB',
-      },
-      type: ['speech'],
+export const inputResponse = (args: Record<string, any> = {}) => {
+  return {
+    action: 'input',
+    eventUrl: ['http://test.com'],
+    speech: {
+      language: 'it-IT',
     },
-  ];
+    type: ['speech'],
+    ...args,
+  };
 };

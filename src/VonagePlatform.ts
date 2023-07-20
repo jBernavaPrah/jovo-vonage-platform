@@ -41,6 +41,7 @@ import { resolve } from 'path';
 import { homedir } from 'os';
 import { promises } from 'fs';
 import { upperCase } from 'lodash';
+import parsePhoneNumber from 'libphonenumber-js';
 
 export interface VonageConfig extends PlatformConfig {
   /**
@@ -51,7 +52,7 @@ export interface VonageConfig extends PlatformConfig {
   /**
    * Language map, used to correctly set the language response.
    */
-  languageMap: Record<string, LanguageEnum | string | undefined>;
+  fallbackCountryLanguageMap: Record<string, LanguageEnum | string | undefined>;
 
   signedToken?: string;
   /**
@@ -171,6 +172,16 @@ export class VonagePlatform extends Platform<
       }
     }.bind(this);
 
+    const getLocale = function (this: VonagePlatform, from: string): string | undefined {
+      const country = parsePhoneNumber(`+${from.replace('+', '')}`)?.country;
+
+      return (
+        this.config.fallbackCountryLanguageMap[country ?? ''] ??
+        Object.keys(LanguageEnum).find((k) => k.endsWith(country ?? '')) ??
+        this.config.fallbackLanguage
+      );
+    }.bind(this);
+
     App.prototype.handle = async function (server: Server) {
       const request = server.getRequestObject();
       const headers = server.getRequestHeaders();
@@ -188,26 +199,10 @@ export class VonagePlatform extends Platform<
         return server.setResponse({});
       }
 
-      let response: ServerResponse | unknown = {};
-      // Set platform origin on request entry
-      const serverCopy = _cloneDeep(server);
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      serverCopy.setResponse = async (r: VonageResponse) => {
-        response = r;
-      };
-
       request.$type = 'vonage';
+      request.locale = getLocale(request.from);
 
-      serverCopy.getRequestObject = () => request;
-      serverCopy.setResponseHeaders({
-        'Content-Type': 'application/json',
-      });
-
-      await APP_HANDLE.call(this, serverCopy);
-
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore // The response is always there.
-      return server.setResponse(response);
+      await APP_HANDLE.call(this, server);
     };
   }
 
@@ -235,7 +230,7 @@ export class VonagePlatform extends Platform<
   getDefaultConfig(): VonageConfig {
     return {
       ...this.getInitConfig(),
-      languageMap: {},
+      fallbackCountryLanguageMap: {},
       fallbackLanguage: LanguageEnum['en-GB'],
     };
   }
@@ -261,20 +256,15 @@ export class VonagePlatform extends Platform<
       ? [...response.map((r) => r.action)]
       : [response.action];
 
-    const eventUrl = this.config.eventUrl ?? (jovo.$request as VonageRequest).$eventUrl;
-    const language =
-      Object.keys(LanguageEnum).find(
-        (k) =>
-          `${jovo.$request.getLocale() ?? ''}-${upperCase(jovo.$request.getLocale() ?? '')}` === k,
-      ) ??
-      this.config.languageMap[jovo.$request.getLocale() ?? ''] ??
-      this.config.fallbackLanguage;
-
     // Add default configuration to each action.
     return responses
       .filter((x): x is Action => x !== undefined)
       .map((r) =>
-        this.setDefaultDataOnAction(r, language, eventUrl),
+        this.setDefaultDataOnAction(
+          r,
+          jovo.$request.getLocale() ?? this.config.fallbackLanguage,
+          this.config.eventUrl ?? (jovo.$request as VonageRequest).$eventUrl,
+        ),
       ) as unknown as VonageResponse[];
   }
 

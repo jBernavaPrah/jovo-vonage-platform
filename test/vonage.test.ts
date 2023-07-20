@@ -2,7 +2,7 @@ import { Action, VonagePlatform, VonageRequest } from '../src/';
 
 import { TestServer } from './TestServer';
 import app from './App';
-import { createVonageHeaders, createVonageRequest, responseWithInput } from './utils';
+import { createVonageHeaders, createVonageRequest, inputResponse } from './utils';
 
 /*
 |--------------------------------------------------------------------------
@@ -13,9 +13,57 @@ import { createVonageHeaders, createVonageRequest, responseWithInput } from './u
 | Learn more here: www.jovo.tech/docs/unit-testing
 |
 */
+const server = new TestServer<Partial<VonageRequest>, Action[]>();
+
 describe('Vonage Basically tests', () => {
-  const server = new TestServer<Partial<VonageRequest>, Action[]>();
-  server.setNativeRequestHeaders(createVonageHeaders());
+  beforeEach(() => {
+    server.setNativeRequestHeaders(createVonageHeaders());
+  });
+
+  test('Ensure correctly loaded locale IT', async () => {
+    await app.initialize();
+    server.setRequest(
+      createVonageRequest({
+        from: '393920247157',
+      }),
+    );
+
+    await app.handle(server);
+
+    //console.log(server.$response);
+    expect(server.$response).toEqual([
+      {
+        action: 'talk',
+        language: 'it-IT',
+        text: 'welcome',
+      },
+      inputResponse(),
+    ]);
+  });
+  test('Ensure correctly loaded locale CH', async () => {
+    await app.initialize();
+    server.setRequest(
+      createVonageRequest({
+        from: '+41446681800',
+      }),
+    );
+
+    await app.handle(server);
+
+    //console.log(server.$response);
+    expect(server.$response).toEqual([
+      {
+        action: 'talk',
+        language: 'de-DE',
+        text: 'welcome',
+      },
+      inputResponse({
+        speech: {
+          language: 'de-DE',
+        },
+      }),
+    ]);
+  });
 
   test('Ensure App Input Config are correctly managed', async () => {
     const platform: VonagePlatform = app.platforms.find(
@@ -44,7 +92,7 @@ describe('Vonage Basically tests', () => {
 
     await app.handle(server);
 
-    const response = responseWithInput()[0];
+    const response = inputResponse() as any;
     response.speech.endInSilence = 0.7;
 
     expect(server.$response).toEqual([response]);
@@ -70,7 +118,7 @@ describe('Vonage Basically tests', () => {
     await app.handle(server);
 
     //console.log(server.$response);
-    expect(server.$response).toEqual(responseWithInput());
+    expect(server.$response).toEqual([inputResponse()]);
   });
 
   test('If timeout reached, use as intent of silence', async () => {
@@ -85,13 +133,14 @@ describe('Vonage Basically tests', () => {
 
     await app.handle(server);
 
-    expect(server.$response).toEqual(
-      responseWithInput({
+    expect(server.$response).toEqual([
+      {
         action: 'talk',
-        language: 'en-GB',
+        language: 'it-IT',
         text: 'silence',
-      }),
-    );
+      },
+      inputResponse(),
+    ]);
   });
 
   test('Barge is added correctly if output template is used', async () => {
@@ -111,14 +160,15 @@ describe('Vonage Basically tests', () => {
 
     await app.handle(server);
 
-    expect(server.$response).toEqual(
-      responseWithInput({
+    expect(server.$response).toEqual([
+      {
         action: 'talk',
-        language: 'en-GB',
+        language: 'it-IT',
         bargeIn: true,
         text: 'barge',
-      }),
-    );
+      },
+      inputResponse(),
+    ]);
   });
 
   test('Ensure requests with status filled are ignored', async () => {
@@ -142,43 +192,14 @@ describe('Vonage Basically tests', () => {
     await app.handle(server);
 
     //console.log(server.$response);
-    expect(server.$response).toEqual(
-      responseWithInput({
+    expect(server.$response).toEqual([
+      {
         action: 'talk',
-        language: 'en-GB',
+        language: 'it-IT',
         text: 'welcome',
-      }),
-    );
-  });
-
-  test('Response with correct Language ', async () => {
-    await app.initialize();
-    server.setRequest({
-      locale: 'it',
-      ...createVonageRequest({
-        speech: {
-          results: [
-            {
-              text: 'bot',
-              confidence: 1,
-            },
-          ],
-        },
-      }),
-    });
-
-    await app.handle(server);
-
-    const response = responseWithInput({
-      action: 'talk',
-      language: 'it-IT',
-      text: 'bot',
-    });
-
-    response[response.length - 1].speech.language = 'it-IT';
-
-    //console.log(server.$response);
-    expect(server.$response).toEqual(response);
+      },
+      inputResponse(),
+    ]);
   });
 
   test('The response has not input action if there is a output with listen false', async () => {
@@ -202,7 +223,7 @@ describe('Vonage Basically tests', () => {
     expect(server.$response).toEqual([
       {
         action: 'talk',
-        language: 'en-GB',
+        language: 'it-IT',
         text: 'goodbye',
       },
     ]);

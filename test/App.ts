@@ -15,13 +15,18 @@ const app = new App({
           bot: 'bot',
         },
         it: {
+          barge: 'barge',
+          empty: 'empty',
+          goodbye: 'goodbye',
           bot: 'bot',
         },
       },
     }),
     new VonagePlatform({
-      languageMap: {
-        en: 'en-GB',
+      fallbackCountryLanguageMap: {
+        GB: 'en-GB',
+        IT: 'it-IT',
+        CH: 'de-DE',
       },
       fallbackLanguage: 'en-GB',
       eventUrl: 'http://test.com',
