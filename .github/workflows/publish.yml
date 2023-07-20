@@ -54,4 +54,5 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - uses: stefanzweifel/git-auto-commit-action@v4
       - run: git push --set-upstream origin main
