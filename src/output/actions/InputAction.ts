@@ -27,6 +27,7 @@ class Speech {
   /**
    * The unique ID of the Call leg for the user to capture the speech of, defined as an array with a single element. The first joined leg of the call by default.
    */
+  @IsOptional()
   @IsString({
     each: true,
   })
@@ -36,6 +37,7 @@ class Speech {
    * Controls how long the system will wait after user stops speaking to decide the input is completed. The default value is 2.0 (seconds). The range of possible values is between 0.4 seconds and 10.0 seconds.
    */
   @IsNumber()
+  @IsOptional()
   @Min(0)
   @Max(10)
   endInSilence?: number = 2;
@@ -43,12 +45,14 @@ class Speech {
   /**
    * Expected language of the user's speech. Format: BCP-47. Default: en-US.
    */
+  @IsOptional()
   @IsEnum(LanguageEnum)
   language?: LanguageEnum | string = LanguageEnum['en-US'];
 
   /**
    * Array of hints (strings) to improve recognition quality if certain words are expected from the user.
    */
+  @IsOptional()
   @IsString({ each: true })
   context?: string[];
 
@@ -56,6 +60,7 @@ class Speech {
    * Controls how long the system will wait for the user to start speaking. The range of possible values is between 1 second and 60 seconds. The default value is 10.
    */
   @IsNumber()
+  @IsOptional()
   @Min(0)
   @Max(60)
   startTimeout?: number = 10;
@@ -63,6 +68,7 @@ class Speech {
   /**
    * Controls maximum speech duration (from the moment user starts speaking). The default value is 60 (seconds). The range of possible values is between 1 and 60 seconds.
    */
+  @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(60)
@@ -71,6 +77,7 @@ class Speech {
   /**
    * Set to true so the speech input recording (recording_url) is sent to your webhook endpoint at eventUrl. The default value is false.
    */
+  @IsOptional()
   @IsBoolean()
   saveAudio?: boolean = false;
 }

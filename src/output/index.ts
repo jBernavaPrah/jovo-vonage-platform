@@ -16,4 +16,9 @@ export * from './common';
 export * from './templates';
 
 export * from './VonageOutputTemplateConversionStrategy';
-export { convertMessageToVonageTalk, createInputAction } from './utilities';
+export {
+  createInputAction,
+  createDTMFInputAction,
+  createSpeechInputAction,
+  createTalkAction,
+} from './utilities';

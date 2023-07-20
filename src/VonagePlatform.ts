@@ -304,6 +304,8 @@ export class VonagePlatform extends Platform<
   private setDefaultDataOnAction(action: Action, language: string, eventUrl: string): Action {
     Object.keys(action).forEach((key) => typeof action[key] === undefined && delete action[key]);
     switch (action.action) {
+      // the input field be without speech, but only with dtmf
+      // todo: use _.deep() to merge in deep
       case ActionAction.Input:
         return {
           eventUrl: [eventUrl],
