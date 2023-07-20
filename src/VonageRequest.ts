@@ -58,7 +58,6 @@ export class VonageRequest extends JovoRequest {
       : undefined;
   }
 
-
   getLocale(): string | undefined {
     // search for the locale from call?
 
