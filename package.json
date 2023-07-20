@@ -1,6 +1,6 @@
 {
   "name": "@jbernavaprah/jovo-platform-vonage",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An unofficial integration of Vonage to Jovo",
   "main": "dist/cjs/index.js",
   "module": "dist/esm5/index.js",
