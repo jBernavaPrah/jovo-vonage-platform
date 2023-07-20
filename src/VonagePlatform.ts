@@ -10,7 +10,6 @@ import {
   Platform,
   PlatformConfig,
   Server,
-  ServerResponse,
   StoredElementSession,
 } from '@jovotech/framework';
 import { Vonage } from './Vonage';
@@ -32,7 +31,6 @@ import {
   TalkAction,
   VonageOutputTemplateConversionStrategy,
 } from './output';
-import _cloneDeep from 'lodash.clonedeep';
 import { LanguageEnum } from './output/common/LanguageEnum';
 import * as jwt from 'jsonwebtoken';
 import * as sha from 'js-sha256';
@@ -40,7 +38,6 @@ import { ExpressJs } from '@jovotech/server-express';
 import { resolve } from 'path';
 import { homedir } from 'os';
 import { promises } from 'fs';
-import { upperCase } from 'lodash';
 import parsePhoneNumber from 'libphonenumber-js';
 
 export interface VonageConfig extends PlatformConfig {

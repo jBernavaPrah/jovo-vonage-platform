@@ -1,6 +1,5 @@
 import { CapabilityType, InputType, JovoInput, JovoRequest } from '@jovotech/framework';
 import { InputTypeLike, UnknownObject } from '@jovotech/cli-core';
-import parsePhoneNumber from 'libphonenumber-js';
 
 export class VonageRequest extends JovoRequest {
   $type? = 'vonage';
@@ -88,7 +87,7 @@ export class VonageRequest extends JovoRequest {
     this.locale = locale;
   }
 
-  setSessionData(data: Record<string, unknown>): void {
+  setSessionData(): void {
     return;
   }
 
