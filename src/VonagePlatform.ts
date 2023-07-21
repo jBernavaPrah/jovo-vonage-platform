@@ -39,6 +39,7 @@ import { resolve } from 'path';
 import { homedir } from 'os';
 import { promises } from 'fs';
 import parsePhoneNumber from 'libphonenumber-js';
+import _ from 'lodash';
 
 export interface VonageConfig extends PlatformConfig {
   /**
@@ -305,51 +306,48 @@ export class VonagePlatform extends Platform<
     Object.keys(action).forEach((key) => typeof action[key] === undefined && delete action[key]);
     switch (action.action) {
       // the input field be without speech, but only with dtmf
-      // todo: use _.deep() to merge in deep
+      // todo: use _.merge() to merge in deep
       case ActionAction.Input:
-        return {
-          eventUrl: [eventUrl],
-          ...this.config.inputConfig,
-          speech: {
-            language,
-            ...this.config.inputConfig?.speech,
+        return _.merge(
+          {
+            eventUrl: [eventUrl],
+            speech: {
+              language,
+            },
           },
-          ...action,
-        };
+          this.config.inputConfig,
+          action,
+        );
       case ActionAction.Talk:
-        return {
-          ...this.config.talkConfig,
-          language,
-          ...action,
-        };
+        return _.merge(this.config.talkConfig, { language }, action);
       case ActionAction.Record:
-        return {
-          eventUrl: [eventUrl],
-          ...this.config.recordConfig,
-          ...action,
-        };
+        return _.merge(
+          {
+            eventUrl: [eventUrl],
+          },
+          this.config.recordConfig,
+          action,
+        );
       case ActionAction.Conversation:
-        return {
-          ...this.config.conversationConfig,
-          ...action,
-        };
+        return _.merge(this.config.conversationConfig, action);
       case ActionAction.Connect:
-        return {
-          eventUrl: [eventUrl],
-          ...this.config.connectConfig,
-          ...action,
-        };
+        return _.merge(
+          {
+            eventUrl: [eventUrl],
+          },
+          this.config.connectConfig,
+          action,
+        );
       case ActionAction.Stream:
-        return {
-          eventUrl: [eventUrl],
-          ...this.config.streamConfig,
-          ...action,
-        };
+        return _.merge(
+          {
+            eventUrl: [eventUrl],
+          },
+          this.config.streamConfig,
+          action,
+        );
       case ActionAction.Notify:
-        return {
-          ...this.config.notifyConfig,
-          ...action,
-        };
+        return _.merge(this.config.notifyConfig, action);
     }
 
     return action;

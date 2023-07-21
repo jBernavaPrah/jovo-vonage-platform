@@ -202,6 +202,37 @@ describe('Vonage Basically tests', () => {
     ]);
   });
 
+  test('Customized response is handled correctly', async () => {
+    await app.initialize();
+    server.setRequest(
+      createVonageRequest({
+        speech: {
+          results: [
+            {
+              text: 'custom',
+              confidence: 1,
+            },
+          ],
+        },
+      }),
+    );
+
+    await app.handle(server);
+
+    //console.log(server.$response);
+    expect(server.$response).toEqual([
+      inputResponse({
+        speech: {
+          endInSilence: 0.4,
+          language: 'it-IT',
+          saveAudio: false,
+          maxDuration: 1,
+          startTimeout: 1,
+        },
+      }),
+    ]);
+  });
+
   test('The response has not input action if there is a output with listen false', async () => {
     await app.initialize();
     server.setRequest(

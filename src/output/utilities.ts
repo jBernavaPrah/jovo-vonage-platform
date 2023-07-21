@@ -37,7 +37,7 @@ export function createDTMFInputAction(
 
 export function createInputAction(
   type: InputType[],
-  config: Omit<TalkAction, 'action' | 'type'>,
+  config: Omit<InputAction, 'action' | 'type'>,
 ): InputAction {
   return plainToInstance(InputAction, {
     action: ActionAction.Input,

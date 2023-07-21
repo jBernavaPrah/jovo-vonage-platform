@@ -1,4 +1,5 @@
 import { v4 } from 'uuid';
+import _ from 'lodash';
 
 export const createVonageRequest = (request: Record<string, unknown> = {}) => ({
   from: '393920247157',
@@ -16,13 +17,15 @@ export const createVonageHeaders = (headers: Record<string, unknown> = {}) => ({
 });
 
 export const inputResponse = (args: Record<string, any> = {}) => {
-  return {
-    action: 'input',
-    eventUrl: ['http://test.com'],
-    speech: {
-      language: 'it-IT',
+  return _.merge(
+    {
+      action: 'input',
+      eventUrl: ['http://test.com'],
+      speech: {
+        language: 'it-IT',
+      },
+      type: ['speech'],
     },
-    type: ['speech'],
-    ...args,
-  };
+    args,
+  );
 };

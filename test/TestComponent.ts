@@ -1,5 +1,5 @@
 import { BaseComponent, Component, Global } from '@jovotech/framework';
-import { TalkActionOutput } from '../src/output/templates/TalkActionOutput';
+import { createInputAction, InputType, LanguageEnum, TalkActionOutput } from '../src';
 
 @Global()
 @Component()
@@ -15,6 +15,23 @@ export class TestComponent extends BaseComponent {
 
   goodbye(): Promise<void> {
     return this.$send({ message: `goodbye`, listen: false });
+  }
+
+  custom(): Promise<void> {
+    return this.$send({
+      platforms: {
+        vonage: {
+          nativeResponse: createInputAction([InputType.speech], {
+            speech: {
+              endInSilence: 0.4,
+              maxDuration: 1,
+              startTimeout: 1,
+              language: this.$request.getLocale(),
+            },
+          }),
+        },
+      },
+    });
   }
 
   empty(): void {
