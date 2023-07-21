@@ -14,6 +14,7 @@ const app = new App({
           goodbye: 'goodbye',
           bot: 'bot',
           custom: 'custom',
+          multiple: 'multiple',
         },
         it: {
           barge: 'barge',
@@ -21,6 +22,7 @@ const app = new App({
           goodbye: 'goodbye',
           bot: 'bot',
           custom: 'custom',
+          multiple: 'multiple',
         },
       },
     }),

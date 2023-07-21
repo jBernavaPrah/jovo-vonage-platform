@@ -306,9 +306,9 @@ export class VonagePlatform extends Platform<
     Object.keys(action).forEach((key) => typeof action[key] === undefined && delete action[key]);
     switch (action.action) {
       // the input field be without speech, but only with dtmf
-      // todo: use _.merge() to merge in deep
       case ActionAction.Input:
         return _.merge(
+          {},
           {
             eventUrl: [eventUrl],
             speech: {
@@ -319,9 +319,10 @@ export class VonagePlatform extends Platform<
           action,
         );
       case ActionAction.Talk:
-        return _.merge(this.config.talkConfig, { language }, action);
+        return _.merge({}, this.config.talkConfig, { language }, action);
       case ActionAction.Record:
         return _.merge(
+          {},
           {
             eventUrl: [eventUrl],
           },
@@ -329,9 +330,10 @@ export class VonagePlatform extends Platform<
           action,
         );
       case ActionAction.Conversation:
-        return _.merge(this.config.conversationConfig, action);
+        return _.merge({}, this.config.conversationConfig, action);
       case ActionAction.Connect:
         return _.merge(
+          {},
           {
             eventUrl: [eventUrl],
           },
@@ -340,6 +342,7 @@ export class VonagePlatform extends Platform<
         );
       case ActionAction.Stream:
         return _.merge(
+          {},
           {
             eventUrl: [eventUrl],
           },
@@ -347,7 +350,7 @@ export class VonagePlatform extends Platform<
           action,
         );
       case ActionAction.Notify:
-        return _.merge(this.config.notifyConfig, action);
+        return _.merge({}, this.config.notifyConfig, action);
     }
 
     return action;

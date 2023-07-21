@@ -202,6 +202,44 @@ describe('Vonage Basically tests', () => {
     ]);
   });
 
+  test('Multiple response correctly returned', async () => {
+    await app.initialize();
+    server.setRequest(
+      createVonageRequest({
+        speech: {
+          results: [
+            {
+              text: 'multiple',
+              confidence: 1,
+            },
+          ],
+        },
+      }),
+    );
+
+    await app.handle(server);
+
+    //console.log(server.$response);
+    expect(server.$response).toEqual([
+      {
+        action: 'talk',
+        language: 'it-IT',
+        text: 'multiple1',
+      },
+      {
+        action: 'talk',
+        language: 'it-IT',
+        text: 'multiple2',
+      },
+      {
+        action: 'talk',
+        language: 'it-IT',
+        text: 'multiple3',
+      },
+      inputResponse(),
+    ]);
+  });
+
   test('Customized response is handled correctly', async () => {
     await app.initialize();
     server.setRequest(

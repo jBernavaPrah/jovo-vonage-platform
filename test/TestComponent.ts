@@ -9,6 +9,12 @@ export class TestComponent extends BaseComponent {
     return this.$send('welcome');
   }
 
+  async multiple(): Promise<void> {
+    await this.$send({ message: `multiple1` });
+    await this.$send({ message: `multiple2` });
+    return this.$send({ message: `multiple3` });
+  }
+
   bot(): Promise<void> {
     return this.$send({ message: `bot` });
   }
