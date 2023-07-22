@@ -23,6 +23,10 @@ export class TestComponent extends BaseComponent {
     return this.$send({ message: `goodbye`, listen: false });
   }
 
+  message(): Promise<void> {
+    return this.$send('');
+  }
+
   custom(): Promise<void> {
     return this.$send({
       platforms: {

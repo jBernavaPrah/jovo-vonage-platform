@@ -202,6 +202,27 @@ describe('Vonage Basically tests', () => {
     ]);
   });
 
+  test('Not explode if empty message', async () => {
+    await app.initialize();
+    server.setRequest(
+      createVonageRequest({
+        speech: {
+          results: [
+            {
+              text: 'message',
+              confidence: 1,
+            },
+          ],
+        },
+      }),
+    );
+
+    await app.handle(server);
+
+    //console.log(server.$response);
+    expect(server.$response).toEqual([inputResponse()]);
+  });
+
   test('Multiple response correctly returned', async () => {
     await app.initialize();
     server.setRequest(

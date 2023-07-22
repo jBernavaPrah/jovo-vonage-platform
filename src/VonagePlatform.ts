@@ -214,6 +214,9 @@ export class VonagePlatform extends Platform<
     });
 
     this.middlewareCollection.use('after.dialogue.end', async (jovo) => {
+      // clean output if message is not set.
+      jovo.$output = jovo.$output.filter((o) => o.message || o.platforms);
+
       // with no output or none of the output has listen to false
       // then instruct vonage to continue to listen
       if (
