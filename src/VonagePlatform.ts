@@ -285,7 +285,10 @@ export class VonagePlatform extends Platform<
     if (jovo.$server instanceof ExpressJs) {
       let protocol = 'https';
       try {
-        protocol = jovo.$server.req?.protocol ?? 'https';
+        protocol =
+          (jovo.$server.req?.headers.host?.endsWith('railway.app')
+            ? 'https'
+            : jovo.$server.req?.protocol) ?? 'https';
       } catch (e) {}
       return `${protocol}://${jovo.$server.req?.headers.host}${jovo.$server.req.originalUrl}`;
     }
